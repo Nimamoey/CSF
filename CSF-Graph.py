@@ -1,6 +1,8 @@
 import math
-import networkx as nx
 import numpy as np
+import networkx as nx
+
+from functools import cmp_to_key
 from lattice import Lattice
 
 #file = open('./dyn9.txt', 'w')
@@ -142,6 +144,39 @@ def coloring_to_partition(coloring):
     partition.sort(reverse=True)
     return partition
 
+def compare_tree_map_elements(x, y):
+    x_poly = list(x[1].items())
+    y_poly = list(y[1].items())
+        
+    n = min(len(x_poly), len(y_poly))
+    
+    for i in range(n):
+        x_key = x_poly[i][0]
+        y_key = y_poly[i][0]
+        
+        m = min(len(x_key), len(y_key))
+        
+        for j in range(m):
+            if x_key[j] < y_key[j]:
+                return -1
+            elif x_key[j] > y_key[j]:
+                return +1
+        
+        if len(x_key) < len(y_key):
+            return -1
+        elif len(x_key) > len(y_key):
+            return +1
+        elif x_poly[i][1] < y_poly[i][1]:
+            return -1
+        elif x_poly[i][1] > y_poly[i][1]:
+            return +1
+    return 0
+    
+def sort_tree_map(tree_map):
+    key_func = cmp_to_key(compare_tree_map_elements)
+    tree_map = sorted(tree_map, key=key_func)
+    return tree_map
+
 
 if __name__ == "__main__":
     n = 8
@@ -164,6 +199,11 @@ if __name__ == "__main__":
 
         mat_print(tree)
         print(chromatic_symmetric_function(partitions, 3))
-        print()
+
+#    tree_map = sort_tree_map(tree_map)
+#    
+#    for x in tree_map:
+#        print(x[1])
+#        print()
 
 #file.close()
