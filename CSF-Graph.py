@@ -11,6 +11,7 @@ def weighter(weight, coloring):
         for j in range(i + 1):
             if coloring[i] != coloring[j]:
                 weight[i][j] = weight[i][j] + 1
+
 def weight_to_matrix(weight):
     x = np.matrix(weight)
     m = x.max()
@@ -21,7 +22,6 @@ def weight_to_matrix(weight):
                 weight[j][i] = 1
             else:
                 weight[i][j] = 0
-
 
 def coef_fixer(partition):
     coef = partition[1]
@@ -36,34 +36,32 @@ def coef_fixer(partition):
         elif partition[i] != partition[i - 1]:
             coef *= math.factorial(counter)
             counter = 1
-
     coef *= math.factorial(counter)
     return [partition, coef]
+
 def partitions_fixer(partitions):
     for i in range(len(partitions)):
         partitions[i] = coef_fixer(partitions[i])
-
     return partitions
-
 
 def row_sum_coef(partition, n):
     ans = [0]*(n - 1)
     for part in partition:
         ans[len(clean_part(part[0])) - 2] += part[1]
-
     return ans
+
 def cf_tree(n, k):
     return k*((k-1) ** (n-1))
 def mat_print(mat):
     for i in range(len(mat)):
         print(" ".join(str(e) for e in mat[i]))
 
-
 def is_valid_coloring(graph, vertex, color, coloring):
     for i in range(len(graph)):
         if graph[vertex][i] == 1 and coloring[i] == color:
             return False
     return True
+
 def check_colorings(graph, colors, vertex, coloring, partitions, weight):
     n = len(graph)
 
@@ -84,6 +82,7 @@ def check_colorings(graph, colors, vertex, coloring, partitions, weight):
             coloring[vertex] = color
             check_colorings(graph, colors, vertex + 1, coloring, partitions, weight)
             coloring[vertex] = 0
+
 def get_partitions(graph, num_colors):
     colors = [1]
     coloring = [0] * num_colors
@@ -92,20 +91,19 @@ def get_partitions(graph, num_colors):
     weight = [[0] * num_colors for i in range(num_colors)]
 
     check_colorings(graph, colors, 1, coloring, partitions, weight)
-
     return partitions
-
 
 def clean_part(part):
     for i in range(len(part)):
         if part[i] == 0:
             return part[0: i]
     return part
+
 def clean_partition(partition):
     for i in range(len(partition)):
         partition[i][0] = clean_part(partition[i][0])
-
     return partition
+
 def chromatic_symmetric_function(partitions, length = 0):
     poly = ""
     if length == 0:
@@ -116,8 +114,8 @@ def chromatic_symmetric_function(partitions, length = 0):
         if len(temp1) <= length:
             temp2 = ", ".join(str(e) for e in temp1)
             poly += str(partitions[i][1]) + "*" + "m([" + temp2 + "])" + " + "
-
     return poly[0: len(poly) - 2]
+
 def sort_partitions(partitions):
     partitions = [[list(x), partitions.count(list(x))] for x in set(tuple(i) for i in partitions)]
 
@@ -128,15 +126,15 @@ def sort_partitions(partitions):
             elif len(clean_part(partitions[i][0])) == len(clean_part(partitions[j][0])):
                 temp = sorted([partitions[i], partitions[j]])
                 partitions[i], partitions[j] = temp[1], temp[0]
-
     return partitions
+
 def dic_maker(partitions):
     dic = {}
 
     for part in partitions:
         dic.update({tuple(clean_part(part[0])) : part[1]})
-
     return dic
+
 def coloring_to_partition(coloring):
     partition = [0] * len(coloring)
     for i in coloring:
@@ -145,35 +143,27 @@ def coloring_to_partition(coloring):
     return partition
 
 
-
-
-
-
 if __name__ == "__main__":
     n = 8
     k = 6
-    Tree_Map = []
-
-
+    
+    tree_map = []
     trees = list(nx.nonisomorphic_trees(n, create='matrix'))
-
 
     for tree in trees:
         partitions = get_partitions(tree, len(tree))
         partitions = sort_partitions(partitions)
         dic = dic_maker(partitions)
-        Tree_Map.append([tree, dic, clean_partition(partitions)])
+        tree_map.append([tree, dic, clean_partition(partitions)])
 
 #        for i in range(len(tree)):
 #            file.write("[" + ", ".join(str(e) for e in tree[i]) + "],\n")
 #        file.write(chromatic_symmetric_function(partitions) + "\n" + 15*"-" + "\n\n")
-
-
 #        file.write(chromatic_symmetric_function(partitions) + "\n\n" + chromatic_symmetric_function(partitions_fixer(partitions)) + "\n\n" + 15*"-" + "\n\n")
 #        print(chromatic_symmetric_function(partitions_fixer(partitions)))
+
         mat_print(tree)
         print(chromatic_symmetric_function(partitions, 3))
         print()
-
 
 #file.close()
