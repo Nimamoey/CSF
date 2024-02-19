@@ -114,39 +114,46 @@ def find_lowest_common_ancestor_with_same_size(list_of_partition1, list_of_parti
         list_of_partition2 = shrinker_list(list_of_partition2)
     return find_common_element(list_of_partition1, list_of_partition2)
 
-""" SMALLEST/BIGGEST LEVEL EQUAL """
+""" ANCESTOR/CHILD LEVEL EQUAL """
 
-def find_biggest_level_equal(partition1, partition2):
-    return find_level_equal_util([make_standard_partiion(partition1)], [make_standard_partiion(partition2)], +1)
-
-def find_smallest_level_equal(partition1, partition2):
-    return find_level_equal_util([make_standard_partiion(partition1)], [make_standard_partiion(partition2)], -1)
+def find_ancestor_level_equal(partition1, partition2):
+    return find_ancestor_level_equal_util([make_standard_partiion(partition1)], [make_standard_partiion(partition2)])
     
-def find_level_equal_util(list_of_partition1, list_of_partition2, constraint):
+def find_ancestor_level_equal_util(list_of_partition1, list_of_partition2):
     if len(list_of_partition1[0]) < len(list_of_partition2[0]) :
-        return find_level_equal_util(list_of_partition2, list_of_partition1, constraint)
+        return find_ancestor_level_equal_util(list_of_partition2, list_of_partition1)
     while len(list_of_partition1[0]) > len(list_of_partition2[0]):
         list_of_partition1 = shrinker_list(list_of_partition1)
-    return find_level_equal_same_size(list_of_partition1, list_of_partition2, constraint)
+    return find_level_equal_same_size(list_of_partition1, list_of_partition2, -1)
+
+def find_child_level_equal(partition1, partition2):
+    return find_child_level_equal_util([make_standard_partiion(partition1)], [make_standard_partiion(partition2)])
+
+def find_child_level_equal_util(list_of_partition1, list_of_partition2):
+    if len(list_of_partition1[0]) > len(list_of_partition2[0]) :
+        return find_child_level_equal_util(list_of_partition2, list_of_partition1)
+    while len(list_of_partition1[0]) < len(list_of_partition2[0]):
+        list_of_partition1 = expander_list(list_of_partition1)
+    return find_level_equal_same_size(list_of_partition1, list_of_partition2, +1)
 
 def find_level_equal_same_size(list_of_partition1, list_of_partition2, constraint):
-    smallest_level_equal = list_of_partition1[0]
+    selected_level_equal = list_of_partition1[0]
     for partition in list_of_partition1:
-        if partition_comparer(partition, smallest_level_equal) == constraint:
-            smallest_level_equal = partition
+        if partition_comparer(partition, selected_level_equal) == constraint:
+            selected_level_equal = partition
     for partition in list_of_partition2:
-        if partition_comparer(partition, smallest_level_equal) == constraint:
-            smallest_level_equal = partition
-    return smallest_level_equal
+        if partition_comparer(partition, selected_level_equal) == constraint:
+            selected_level_equal = partition
+    return selected_level_equal
 
-a = [3, 2, 2, 1]
-b = [6, 1, 1]
+a = [8]
+b = [5, 2, 1]
 
-print("SMALLEST LEVEL EQUAL:")
-print(find_smallest_level_equal(a, b))
+print("ANCESTOR LEVEL EQUAL:")
+print(find_ancestor_level_equal(a, b))
 
-print("\nBIGGEST LEVEL EQUAL:")
-print(find_biggest_level_equal(a, b))
+print("\nCHILD LEVEL EQUAL:")
+print(find_child_level_equal(a, b))
 
 print("\nHIGHEST COMMON CHILD:")
 print(find_highest_common_child(a, b))
