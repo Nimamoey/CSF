@@ -114,9 +114,42 @@ def find_lowest_common_ancestor_with_same_size(list_of_partition1, list_of_parti
         list_of_partition2 = shrinker_list(list_of_partition2)
     return find_common_element(list_of_partition1, list_of_partition2)
 
+""" SMALLEST/BIGGEST LEVEL EQUAL """
 
-a = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-b = [5, 5]
+def find_biggest_level_equal(partition1, partition2):
+    return find_level_equal_util([make_standard_partiion(partition1)], [make_standard_partiion(partition2)], +1)
 
-print (find_highest_common_child(a, b))
-print (find_lowest_common_ancestor(a, b))
+def find_smallest_level_equal(partition1, partition2):
+    return find_level_equal_util([make_standard_partiion(partition1)], [make_standard_partiion(partition2)], -1)
+    
+def find_level_equal_util(list_of_partition1, list_of_partition2, constraint):
+    if len(list_of_partition1[0]) < len(list_of_partition2[0]) :
+        return find_level_equal_util(list_of_partition2, list_of_partition1, constraint)
+    while len(list_of_partition1[0]) > len(list_of_partition2[0]):
+        list_of_partition1 = shrinker_list(list_of_partition1)
+    return find_level_equal_same_size(list_of_partition1, list_of_partition2, constraint)
+
+def find_level_equal_same_size(list_of_partition1, list_of_partition2, constraint):
+    smallest_level_equal = list_of_partition1[0]
+    for partition in list_of_partition1:
+        if partition_comparer(partition, smallest_level_equal) == constraint:
+            smallest_level_equal = partition
+    for partition in list_of_partition2:
+        if partition_comparer(partition, smallest_level_equal) == constraint:
+            smallest_level_equal = partition
+    return smallest_level_equal
+
+a = [3, 2, 2, 1]
+b = [6, 1, 1]
+
+print("SMALLEST LEVEL EQUAL:")
+print(find_smallest_level_equal(a, b))
+
+print("\nBIGGEST LEVEL EQUAL:")
+print(find_biggest_level_equal(a, b))
+
+print("\nHIGHEST COMMON CHILD:")
+print(find_highest_common_child(a, b))
+
+print("\nLOWEST COMMON ANCESTOR:")
+print(find_lowest_common_ancestor(a, b))
