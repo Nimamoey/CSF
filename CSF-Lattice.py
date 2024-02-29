@@ -137,17 +137,39 @@ def find_child_level_equal_util(list_of_partition1, list_of_partition2):
     return find_level_equal_same_size(list_of_partition1, list_of_partition2, +1)
 
 def find_level_equal_same_size(list_of_partition1, list_of_partition2, constraint):
-    selected_level_equal = list_of_partition1[0]
-    for partition in list_of_partition1:
-        if partition_comparer(partition, selected_level_equal) == constraint:
-            selected_level_equal = partition
-    for partition in list_of_partition2:
-        if partition_comparer(partition, selected_level_equal) == constraint:
-            selected_level_equal = partition
-    return selected_level_equal
+    if list_of_partition2[0] in list_of_partition1:
+        return list_of_partition2[0]
+    
+    list_of_partitions = []
+    list_of_partitions.append(list_of_partition1)
+    list_of_partitions.append(list_of_partition2)
+    
+    list_of_partitions = sort_partitions(list_of_partitions)
+    
+    index = 0
+    for i in range(0, len(list_of_partitions)):
+        if list_of_partitions[i] == list_of_partition2[0]:
+            index = i
+            
+    if constraint > 0:
+        return list_of_partitions[i - 1][0]
+    elif constraint < 0:
+        if i + 1 == len(list_of_partitions):
+            return list_of_partitions[-1][0]
+        return list_of_partitions[i + 1][0]
+    return None
+    
+    # selected_level_equal = list_of_partition1[0]
+    # for partition in list_of_partition1:
+    #     if partition_comparer(partition, selected_level_equal) == constraint:
+    #         selected_level_equal = partition
+    # for partition in list_of_partition2:
+    #     if partition_comparer(partition, selected_level_equal) == constraint:
+    #         selected_level_equal = partition
+    # return selected_level_equal
 
-a = [8]
-b = [5, 2, 1]
+a = [4, 4]
+b = [5, 3]
 
 print("ANCESTOR LEVEL EQUAL:")
 print(find_ancestor_level_equal(a, b))
